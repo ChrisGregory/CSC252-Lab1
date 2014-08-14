@@ -82,14 +82,25 @@ public abstract class BinaryTree<T extends Comparable<T>> {
 				System.out.print("Lv" + i + ": ");
 				for(int j = 0; j < levels[i].size(); j++)
 				{
-					Node node = (Node)levels[i].get(j);
-					
-					System.out.print(node.data + "["+node.weight+"]|P=" + (node.parent == null ? nullString : node.parent.data) + " ");
+					Node node = (Node)levels[i].get(j);		
+					System.out.print(node.data + "["+node.weight+"]|P=" + (node.parent == null ? "NULL" : node.parent.data +"["+node.parent.weight+"]") + " ");
 				}
 				System.out.println();
 			}
 		} else {
 			System.out.println("There is no data in this tree. Root is null.");
+		}
+	}
+	public void printInOrder() {
+		printInOrder(root);
+	}
+	public void printInOrder(Node currentNode) {
+		if (currentNode.left != null) {
+			printInOrder(currentNode.left);
+		}
+		System.out.print(currentNode.data + "["+currentNode.weight+"]|P=" + (currentNode.parent == null ? "NULL" : currentNode.parent.data+"["+currentNode.parent.weight+"]")+ " ");
+		if (currentNode.right != null) {
+			printInOrder(currentNode.right);
 		}
 	}
 

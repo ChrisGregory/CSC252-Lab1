@@ -1,4 +1,13 @@
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
+
+import sun.misc.IOUtils;
 
 public class Project {
 	/*
@@ -34,21 +43,75 @@ public class Project {
 	 */
 	public static void main(String[] args) {
 
-		System.out.println("Tree 1. Integers.");
-		Byte[] byteArray = new Byte[]{45,56,67,78,89,12,23,34,45,23,45,67,45};
+		System.out.println("Building Huffman Tree:");
+		Byte[] byteArray = new Byte[] { 45, 56, 67, 78, 89, 12, 23, 34, 45, 23,
+				45, 67, 45 };
 		HuffmanTree<Byte> hTree = new HuffmanTree<Byte>(byteArray);
-		hTree.print();
-		
-		System.out.println("Tree 2. Integers.");
-		HuffmanTree<Integer> hTree2 = new HuffmanTree<Integer>();
-		hTree2.insert(5);
-		hTree2.insert(8);
-		hTree2.insert(7);
-		hTree2.insert(9);
-		hTree2.insert(2);
-		hTree2.insert(3);
-		hTree2.insert(1);
-		hTree2.print();
+		System.out.println();
 
+		System.out.println("Printing Tree:");
+		hTree.print();
+
+		byte searchByte = (byte) 45;
+		Bits bits = new Bits();
+		hTree.fromByte(searchByte, bits);
+		System.out.println("\nGetting " + searchByte + " from byte: "
+				+ bits.toString());
+		System.out.println("\nSending " + bits.toString()
+				+ " to get the next byte: " + hTree.toByte(bits));
+
+		
+
+		System.out.println("\nBuilding Huffman Tree based on JC's Image.");
+		HuffmanTree<Byte> imageHuffmanTree = null;
+		Byte[] imageBytes = null;
+		byte[] imageBytes1 = null;
+		try {
+			File file = new File("compressed.huff");
+			InputStream is = new FileInputStream(file);
+			imageBytes1 = getBytesFromInputStream(is);
+			imageBytes = new Byte[imageBytes1.length];
+			int i = 0;
+			for (byte b : imageBytes1) {
+				imageBytes[i++] = b;
+			}
+			imageHuffmanTree = new HuffmanTree<Byte>(imageBytes);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Leaves = " + imageHuffmanTree.leaves);
+		imageHuffmanTree.print();
+		HuffmanCompressor compressor = new HuffmanCompressor();
+		byte[] decompressedImageBytes = compressor.decompress(imageHuffmanTree, 54679, imageBytes);
+		//This currenthly throws an exception because I need to finish decompression.
+		System.out.println("Decompressed file size = " + decompressedImageBytes.length + " bytes");
+		FileOutputStream fos;
+		try {
+			String decompressedFilename = "decompressed.huff";
+			fos = new FileOutputStream("decompressedFilename");
+			fos.write(decompressedImageBytes);
+			fos.close();
+			System.out.println("Decompressed this file & saved as " + decompressedFilename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
+	public static byte[] getBytesFromInputStream(InputStream is) {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
+			byte[] buffer = new byte[0xFFFF];
+
+			for (int len; (len = is.read(buffer)) != -1;)
+				os.write(buffer, 0, len);
+
+			os.flush();
+
+			return os.toByteArray();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
 }

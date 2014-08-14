@@ -30,19 +30,14 @@ public class Node<T extends Comparable<T>> implements Comparable {
 	}
 
 	public Node(Node<T> node1, Node<T> node2) {
-		
-			this.data = null;
-			this.parent = null;
-			if(node1.data == null || node2.data == null){
-				this.left = node1.compareTo(node2) < 0 ? node1 : node2;
-				this.right = node1.compareTo(node2) > 0 ? node1 : node2;
-			} else {
-				this.left = node1.data.compareTo(node2.data) < 0 ? node1 : node2;
-				this.right = node1.data.compareTo(node2.data) > 0 ? node1 : node2;
-			}
-			this.left.parent = this;
-			this.right.parent = this;
-			this.weight = node1.weight + node2.weight;
+
+		this.data = null;
+		this.parent = null;
+		this.left = node1.compareTo(node2) < 0 ? node1 : node2;
+		this.right = node1.compareTo(node2) < 0 ? node2 : node1;
+		this.left.parent = this;
+		this.right.parent = this;
+		this.weight = node1.weight + node2.weight;
 	}
 
 	public int balanceFactor() {
