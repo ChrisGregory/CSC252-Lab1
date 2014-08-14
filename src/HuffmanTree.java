@@ -46,6 +46,26 @@ public class HuffmanTree<T extends Comparable<T>> extends BinaryTree<T> {
 	public HuffmanTree() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public HuffmanTree(Queue<Node<Byte>> pQueue) {
+
+	// Make a bunch of empty hybrid nodes out of every other node.
+	while (pQueue.size() > 1) {
+		//System.out.println("pQueue.size() = " + pQueue.size());
+		Node value1 = pQueue.poll();
+		Node value2 = pQueue.poll();
+		//System.out.println("Combining " + value1.data + "["+value1.weight+"] with " + value2.data + "["+value2.weight+"]");
+		Node hybrid = new Node<Byte>(value1, value2);
+		pQueue.offer(hybrid);
+		//System.out.println("Added Hybrid: " + hybrid.data + "["+hybrid.weight+"]");
+		//System.out.println("Children: left:"+hybrid.left.data+" right:"+hybrid.right.data);
+	}
+
+	// Last node standing becomes root, if empty, just set it to null.
+	root = (pQueue.size() > 0) ? pQueue.poll() : null;
+	}
+	
+	
 
 	private Node getNode(byte b) {
 		Node result = getNode(b, root);
